@@ -1,0 +1,18 @@
+For initializing the database, execute the following sql files, 
+in SEPARATE QUERY TABS, 
+in the order specified:
+
+1. Schema
+2. Triggers
+3. Book
+4. Customer
+5. Manager
+6. Orders
+7. Gives Feedback
+8. Rates Feedback
+
+Alternatively, execute
+
+1. Schema
+2. Triggers
+3. Insert All Initial Data into DB (No.3-8)
