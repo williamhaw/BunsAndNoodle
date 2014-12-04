@@ -92,7 +92,7 @@
             </c:otherwise>
                     
         </c:choose>
-
+        
         <table border="1">
             <!-- column headers -->
             <tr>
@@ -104,7 +104,14 @@
             <c:forEach var="row" items="${result.rowsByIndex}">
             <tr>
                 <c:forEach var="column" items="${row}">
-                    <td><c:out value="${column}"/></td>
+                    <c:choose>
+                        <c:when test="${column == row[0]}">
+                            <td><a href="book.jsp?isbn13=<c:out value="${row[7]}"/>"><c:out value="${column}"/></a></td>
+                        </c:when>
+                        <c:otherwise>
+                            <td><c:out value="${column}"/></td>
+                        </c:otherwise>
+                    </c:choose>
                 </c:forEach>
             </tr>
             </c:forEach>
