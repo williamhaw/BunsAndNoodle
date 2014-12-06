@@ -26,9 +26,12 @@
                 <nav> 
                     <ul>
                         <li><a href="book_search.jsp">Search</a></li>
-                        <li><a href="login.jsp">Account</a></li>
+                        <li><a href="customer.jsp">Account</a></li>
                         <li><a href="about.jsp">About</a></li>
                         <li><a href="login.jsp">Home</a></li>
+                        <c:if test="${not empty userid}">
+                            <li><a href="logout.jsp">Logout</a></li>
+                        </c:if>
                     </ul>
                 </nav>
             </header>
@@ -72,6 +75,11 @@
             </div>
             
             <div id="search_result">
+                <c:choose>
+                    <c:when test="username != null">
+                        Hello <c:out value="${username}"/>!
+                    </c:when>
+                </c:choose>
                 <!-- 
                     When page first loads, all param values are null! 
                     Param values are not null only when user clicks on submit button-->

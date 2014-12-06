@@ -29,6 +29,9 @@
 	                    <li><a href="customer.jsp">Account</a></li>
 	                    <li><a href="about.jsp">About</a></li>
 	                    <li><a href="login.jsp">Home</a></li>
+                            <c:if test="${not empty userid}">
+                                <li><a href="logout.jsp">Logout</a></li>
+                            </c:if>
 	                </ul>
 	            </nav>
 	        </header>

@@ -29,13 +29,45 @@
 	                    <li><a href="customer.jsp">Account</a></li>
 	                    <li><a href="about.jsp">About</a></li>
 	                    <li><a href="login.jsp">Home</a></li>
+                            <c:if test="${not empty userid}">
+                                <li><a href="logout.jsp">Logout</a></li>
+                            </c:if>
 	                </ul>
 	            </nav>
 	        </header>
 
+                <!-- error output -->
+                <c:choose>
+                    <c:when test="${param.error != null}">
+                        Error: <c:out value="${param.error}"/>
+                    </c:when>
+                </c:choose>
 
-	        <h2>Login or Sign Up</h2>
-	        <h2>Rmb to handle errors (e.g. user name not unique, user doesn't exist or password don't match etc.)</h2>
+	        <h2>Login</h2>
+                <form method='post' action='auth.jsp'>
+                    <label for='username'>Username</label>
+                    <input type="text" name='username' value="" />
+                    <br/>
+                    <label for='password'>Password</label>
+                    <input type="password" name='password' value="" />
+                    <br/>
+                    <input type='submit' value="Login"/>
+                </form>
+                <br/>
+                <h3>or</h3>
+                <h2>Signup</h2>
+                <form method='post' action='signup.jsp'>
+                    <label for='username'>Username</label>
+                    <input type="text" name='username' value="" />
+                    <br/>
+                    <label for='password'>Password</label>
+                    <input type="password" name='password' value="" />
+                    <br/>
+                    <label for='fullname'>Full Name</label>
+                    <input type="text" name='fullname' value="" />
+                    <br/>
+                    <input type='submit' value="Signup"/>
+                </form>
         </div>
     </body>
     
