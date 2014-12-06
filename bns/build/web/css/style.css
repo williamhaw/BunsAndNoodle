@@ -11,7 +11,7 @@ h1 {
     font-size: 1.4em;
     color: #be7429;
     font-weight: normal;
-    width: 450px;
+    width: 1000px;
 }
 
 table {
@@ -40,3 +40,5 @@ a:link:hover {
    font-weight: normal;
    text-decoration: underline;
 }
+
+
