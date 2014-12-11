@@ -20,7 +20,6 @@
                 <div id="company_name">
                     <h1>Buns and Noodles Bookstore</h1>
                 </div>
-                
                 <nav> 
                     <ul>
                         <li><a href="book_search.jsp">Search</a></li>
@@ -33,29 +32,36 @@
                     </ul>
                 </nav>
             </header>
-
-
+            
             <sql:query var="result" dataSource="jdbc/bns">
                 SELECT title, format, pages, language, authors, publisher, year, 
                     isbn13, subject, copies, price
                 FROM book
-                WHERE book.isbn13 = ?<sql:param value="${param.isbn13}"/>
+                WHERE book.isbn13 = ? <sql:param value="${param.isbn13}"/>
             </sql:query>
-            <table border='1'>
-                <c:forEach var="columnName" items="${result.columnNames}">
-                    <th><c:out value="${columnName}"/></th>
-                </c:forEach>
-                <c:forEach var="row" items="${result.rowsByIndex}">
-                <tr>
-                    <c:forEach var="column" items="${row}">
-                        <td><c:out value="${column}"/></td>
-                    </c:forEach>
-                </tr>
-                </c:forEach>         
-            </table>
-            
+            <c:forEach var="row" items="${result.rows}">
+                <p><b>Title:</b> <c:out value="${row.title}"/></p>
+                <p><b>Format:</b> <c:out value="${row.format}"/></p>
+                <p><b>Pages:</b> <c:out value="${row.pages}"/></p>
+                <p><b>Language:</b> <c:out value="${row.language}"/></p>
+                <p><b>Authors:</b> <c:out value="${row.authors}"/></p>
+                <p><b>Publisher:</b> <c:out value="${row.publisher}"/></p>
+                <p><b>Year:</b> <c:out value="${row.year}"/></p>
+                <p><b>ISBN13:</b> <c:out value="${row.isbn13}"/></p>
+                <p><b>Subject:</b> <c:out value="${row.subject}"/></p>
+                <p><b>Copies Available:</b> 
+                    <c:choose>
+                        <c:when test="${row.copies>0}"> 
+                            <c:out value="${row.copies}"/>
+                        </c:when>
+                        <c:otherwise>
+                            Out of stock
+                        </c:otherwise>
+                    </c:choose>
+                </p>
+                <b>Price: </b> $<c:out value="${row.price}"/>
+            </c:forEach>
         </div>
-
-
     </body>
 </html>
+ 

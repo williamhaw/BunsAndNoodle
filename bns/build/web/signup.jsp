@@ -8,7 +8,7 @@
     String address = request.getParameter("address");
     
     // redirect to login page if there is error
-    // the error param in the login page will receive the errror msg and print it out (if the error param is not null)
+    // the error param in the login page will receive the error msg and print it out (if the error param is not null)
     try {
         if (user.equals("") || pwd.equals("") || fullname.equals("") || 
             creditcard.equals("") || phone.equals("") || address.equals("")) {        

@@ -15,38 +15,38 @@
     
     <body>
     	<div id="wrapper">
-	        <header>
-	            <div id="logo">
-	                <img src="http://peopleandplanet.org/cms_graphics/img1279_size1.png" width="50px" alt="Buns and Noodles Bookstore">
-	            </div>
-	            <div id="company_name">
-	                <h1>Buns and Noodles Bookstore</h1>
-	            </div>
-	            
-	            <nav> 
-	                <ul>
-	                    <li><a href="book_search.jsp">Search</a></li>
-	                    <li><a href="customer.jsp">Account</a></li>
-	                    <li><a href="about.jsp">About</a></li>
-	                    <li><a href="login.jsp">Home</a></li>
-                            <c:if test="${not empty userid}">
-                                <li><a href="logout.jsp">Logout</a></li>
-                            </c:if>
-                            
-	                </ul>
-	            </nav>
-	        </header>
+            <header>
+                <div id="logo">
+                    <img src="http://peopleandplanet.org/cms_graphics/img1279_size1.png" width="50px" alt="Buns and Noodles Bookstore">
+                </div>
+                <div id="company_name">
+                    <h1>Buns and Noodles Bookstore</h1>
+                </div>
+
+                <nav> 
+                    <ul>
+                        <li><a href="book_search.jsp">Search</a></li>
+                        <li><a href="customer.jsp">Account</a></li>
+                        <li><a href="about.jsp">About</a></li>
+                        <li><a href="login.jsp">Home</a></li>
+                        <c:if test="${not empty userid}">
+                            <li><a href="logout.jsp">Logout</a></li>
+                        </c:if>
+
+                    </ul>
+                </nav>
+            </header>
 
             <c:choose>
                 <c:when test="${userid == null}">
-                    Please login or signup <a href="login.jsp">here.</a>
+                    Please login or signup <a href="login.jsp">here</a>.
                 </c:when>
                 <c:otherwise>
                     <h1>Account Details</h1>
                     <sql:query var="user" dataSource="jdbc/bns">
                         SELECT name, credit_card, phone, address
                         FROM customer
-                        WHERE customer.login = ?<sql:param value="${userid}"/>
+                        WHERE customer.login = ? <sql:param value="${userid}"/>
                     </sql:query>
 
 
@@ -69,7 +69,7 @@
                         FROM orders
                         INNER JOIN book
                         ON book.isbn13 = orders.order_isbn13
-                        WHERE order_customer = ?<sql:param value="${userid}"/>
+                        WHERE order_customer = ? <sql:param value="${userid}"/>
                     </sql:query>
                     <table border='1'>
                         <th>Title</th>
@@ -91,7 +91,7 @@
                         FROM gives_feedback
                         INNER JOIN book
                         ON book.isbn13 = gives_feedback.feedback_isbn13
-                        WHERE feedback_customer = ?<sql:param value="${userid}"/>
+                        WHERE feedback_customer = ? <sql:param value="${userid}"/>
                     </sql:query>
                     <table border='1'>
                         <th>Title</th>
