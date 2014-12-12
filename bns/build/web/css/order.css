@@ -1,0 +1,100 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Dec 12, 2014, 11:19:02 PM
+    Author     : Scott
+*/
+
+
+#wrapper {
+    width: 1450px;
+    background-color: #FFF;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header {
+    height: 115px;
+}
+
+#logo {
+    float:left;
+    width: 5%;
+}
+
+#company_name {
+    float:left;
+    text-align: left;
+    height: 26px;
+    line-height: 26px
+}
+
+/* search result */
+#search_result {
+    width: 81%;
+}
+
+#search_result table {
+    border-collapse: collapse;
+    background-color: #DAF4F0;
+    table-layout: auto; /* use "fixed" if there are rendering problems; seems to be working now*/
+    width: 99%;
+}
+
+
+#search_result th, td {
+    text-align: left;
+    border: 1px solid;
+    padding: 10px;
+    /*word-break: break-all; 
+    white-space: nowrap;*/
+}
+
+
+
+h2 {
+    font-size: medium;
+    font-weight: bold;
+}
+
+
+
+/* Navigation bar code from Listamtic
+http://css.maxdesign.com.au/listamatic/horizontal03.htm */
+
+nav ul {
+    padding-left: 0px;
+    margin-left: 0px;
+    background-color: #209a9b;
+    float: right;
+    width: 100%;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    font-size: 1em;
+    padding: 7px 16px; /* increasing the padding can potentially cause search_pane to be shifted down*/
+    background-color: #209a9b;
+    color: #FFF;
+    text-decoration: none;
+    float: right;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+}
+
+nav ul li a:hover {
+    background-color: #999;
+    color: #fff;
+}
+
+.highlight a {
+    background-color: #999;
+}
+
+
