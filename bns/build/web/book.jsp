@@ -26,22 +26,22 @@
                         <li><a href="customer.jsp">Account</a></li>
                         <li><a href="about.jsp">About</a></li>
                         <li><a href="login.jsp">Home</a></li>
-                        <c:if test="${not empty userid}">
+                            <c:if test="${not empty userid}">
                             <li><a href="logout.jsp">Logout</a></li>
-                        </c:if>
+                            </c:if>
                     </ul>
                 </nav>
             </header>
-            
+
             <c:choose>
                 <c:when test="${param.error != null}">
                     Error: <c:out value="${param.error}"/>
                 </c:when>
             </c:choose>
-            
+
             <sql:query var="result" dataSource="jdbc/bns">
                 SELECT title, format, pages, language, authors, publisher, year, 
-                    isbn13, subject, copies, price
+                isbn13, subject, copies, price
                 FROM book
                 WHERE book.isbn13 = ? <sql:param value="${param.isbn13}"/>
             </sql:query>
@@ -65,57 +65,97 @@
                         </c:otherwise>
                     </c:choose>
                     <c:set var="copyNumber" value='${row.copies}'/>
+                    <c:set var="bookName" value = '${row.title}'/>
                 </p>
                 <b>Price: </b> $<c:out value="${row.price}"/>
             </c:forEach><br><br>
-                <h1>Order Book Now!</h1>
-                <form method='post' action='order.jsp'>
-                    <label for="numberOfBooks">Number of books to order: </label>
-                    <input type = "number" name ="order_number" value="1" min="1" max="${copyNumber}"/>
-                    <input type='hidden' name ='copy_number' value='${copyNumber}'/>
-                    <input type='hidden' name='isbn13' value='${param.isbn13}'/>
-                    <input type ='submit' value='Order Book Now!'/>
-                </form>
-                <br><br>
-                
-                <sql:query var="feedbacks" dataSource="jdbc/bns">
-                SELECT feedback_customer, feedback_date,feedback_score,feedback_text, name
+            <h1>Order Book Now!</h1>
+            <form method='post' action='order.jsp'>
+                <label for="numberOfBooks">Number of books to order: </label>
+                <input type = "number" name ="order_number" value="1" min="1" max="${copyNumber}"/>
+                <input type='hidden' name ='copy_number' value='${copyNumber}'/>
+                <input type='hidden' name='isbn13' value='${param.isbn13}'/>
+                <input type='hidden' name='book_name' value='${bookName}' />
+                <input type ='submit' value='Order Book Now!'/>
+            </form>
+            <br><br>
+
+            <sql:query var="feedbacks" dataSource="jdbc/bns">
+                select feedback_text, feedback_score, feedback_customer,name,feedback_date,avg(IFNULL(rating,0)) as avgScore, count(*) as ratingCount from(
+                SELECT feedback_customer, feedback_date,feedback_score,feedback_text, name,feedback_isbn13
                 FROM gives_feedback inner join customer on customer.login=gives_feedback.feedback_customer
-                WHERE feedback_isbn13 = ? <sql:param value="${param.isbn13}"/>
+                WHERE feedback_isbn13 =  ? <sql:param value="${param.isbn13}"/>) as K left join rates_feedback on rates_feedback.ratee=feedback_customer
+                and ratee_feedback_isbn13=feedback_isbn13 group by feedback_text,feedback_score,feedback_customer,name,feedback_date order by avgScore DESC;
             </sql:query> 
-                <c:set var="userid" value = '<%= session.getAttribute("userid") %>'/>
-                
-                <h2>Give Feedback</h2>
-                <c:choose><c:when test='${userid != bob}'>
-                <form method='post' action='submit_feedback.jsp'>
-                <label for='feedback'>Feedback: </label><br>
-                <textarea rows="4" cols="50" name="feedback">
+            <c:set var="userid" value = '<%= session.getAttribute("userid")%>'/>
+            <c:set var='givenFeedback' value='false'/>
+            <c:forEach var="row" items='${feedbacks.rows}'>
+                <c:if test='${row.feedback_customer==userid}'>
+                    <c:set var='givenFeedback' value='true'/>
+                </c:if>
+            </c:forEach>
+            <h2>Give Feedback</h2>
+            <c:choose><c:when test='${givenFeedback}'>        
+                    You have given your feedback previously! Thank you!
+                </c:when>
+                <c:otherwise>
+                    <form method='post' action='submit_feedback.jsp'>
+                        <label for='feedback'>Feedback: </label><br>
+                        <textarea rows="4" cols="50" name="feedback">
 Enter text here...</textarea>
-                <br>
-                <label for='score'>Score: </label>
-                <input type="number" name='score' value="" min='1' max='10'/>
-                <input type='submit' value="Submit Review"/>
-                <input type='text' name='isbn13' value='${param.isbn13}'/>
-                <input type="text" name='user' value="<%= session.getAttribute("userid") %>" />
-                </form></c:when>
-                    <c:otherwise>
-                        This is the extra line if otherwise.
-                    </c:otherwise>
-                        
-                </c:choose>
-            
+                        <br>
+                        <label for='score'>Score: </label>
+                        <input type="number" name='score' value="" min='1' max='10'/>
+                        <input type='submit' value="Submit Review"/>
+                        <input type='text' name='isbn13' value='${param.isbn13}'/>
+                        <input type="text" name='user' value="<%= session.getAttribute("userid")%>" />
+                    </form>
+                </c:otherwise>
+
+            </c:choose>
+
             <br><br>
             <h2>Submitted feedback</h2>
-               
+
             <c:forEach var="row" items="${feedbacks.rows}">
                 <p><b>Customer:</b> <c:out value="${row.name}"/></p> 
                 <p><b>Date:</b> <c:out value="${row.feedback_date}"/></p> 
                 <p><b>Score:</b> <c:out value="${row.feedback_score}"/></p> 
                 <p><b>Text:</b> <c:out value="${row.feedback_text}"/></p>
+                <p>This feedback has been graded as: <b><c:out value="${row.avgScore}"/></b> from <b><c:out value="${row.ratingCount}"/></b> user(s).</p>
                 <br>
+
+                <div id="content">
+                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc fermentum.
+                </div>
+                <a href="#" onclick="toggle('content')">Toggle</a>
+                <script type="text/javascript">
+
+                    function toggle(id) {
+                        var e = document.getElementById(id);
+
+                        if (e.style.display == '')
+                            e.style.display = 'none';
+                        else
+                            e.style.display = '';
+                    }
+
+                </script>
+
+
+                <form method='post' action='rates_feedback.jsp'>
+                    <label for='feedback'>Feedback: </label><br>
+                    <textarea rows="4" cols="50" name="feedback">
+        Enter text here...</textarea>
+                    <br>
+                    <label for='score'>Score: </label>
+                    <input type="number" name='score' value="" min='1' max='10'/>
+                    <input type='submit' value="Submit Review"/>
+                    <input type='text' name='isbn13' value='${param.isbn13}'/>
+                    <input type="text" name='user' value="<%= session.getAttribute("userid")%>" />
+                </form>
             </c:forEach>
-                
+
         </div>
     </body>
 </html>
- 
