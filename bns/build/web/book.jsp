@@ -33,6 +33,12 @@
                 </nav>
             </header>
             
+            <c:choose>
+                <c:when test="${param.error != null}">
+                    Error: <c:out value="${param.error}"/>
+                </c:when>
+            </c:choose>
+            
             <sql:query var="result" dataSource="jdbc/bns">
                 SELECT title, format, pages, language, authors, publisher, year, 
                     isbn13, subject, copies, price
@@ -58,9 +64,57 @@
                             Out of stock
                         </c:otherwise>
                     </c:choose>
+                    <c:set var="copyNumber" value='${row.copies}'/>
                 </p>
                 <b>Price: </b> $<c:out value="${row.price}"/>
+            </c:forEach><br><br>
+                <h1>Order Book Now!</h1>
+                <form method='post' action='order.jsp'>
+                    <label for="numberOfBooks">Number of books to order: </label>
+                    <input type = "number" name ="order_number" value="1" min="1" max="${copyNumber}"/>
+                    <input type='hidden' name ='copy_number' value='${copyNumber}'/>
+                    <input type='hidden' name='isbn13' value='${param.isbn13}'/>
+                    <input type ='submit' value='Order Book Now!'/>
+                </form>
+                <br><br>
+                
+                <sql:query var="feedbacks" dataSource="jdbc/bns">
+                SELECT feedback_customer, feedback_date,feedback_score,feedback_text, name
+                FROM gives_feedback inner join customer on customer.login=gives_feedback.feedback_customer
+                WHERE feedback_isbn13 = ? <sql:param value="${param.isbn13}"/>
+            </sql:query> 
+                <c:set var="userid" value = '<%= session.getAttribute("userid") %>'/>
+                
+                <h2>Give Feedback</h2>
+                <c:choose><c:when test='${userid != bob}'>
+                <form method='post' action='submit_feedback.jsp'>
+                <label for='feedback'>Feedback: </label><br>
+                <textarea rows="4" cols="50" name="feedback">
+Enter text here...</textarea>
+                <br>
+                <label for='score'>Score: </label>
+                <input type="number" name='score' value="" min='1' max='10'/>
+                <input type='submit' value="Submit Review"/>
+                <input type='text' name='isbn13' value='${param.isbn13}'/>
+                <input type="text" name='user' value="<%= session.getAttribute("userid") %>" />
+                </form></c:when>
+                    <c:otherwise>
+                        This is the extra line if otherwise.
+                    </c:otherwise>
+                        
+                </c:choose>
+            
+            <br><br>
+            <h2>Submitted feedback</h2>
+               
+            <c:forEach var="row" items="${feedbacks.rows}">
+                <p><b>Customer:</b> <c:out value="${row.name}"/></p> 
+                <p><b>Date:</b> <c:out value="${row.feedback_date}"/></p> 
+                <p><b>Score:</b> <c:out value="${row.feedback_score}"/></p> 
+                <p><b>Text:</b> <c:out value="${row.feedback_text}"/></p>
+                <br>
             </c:forEach>
+                
         </div>
     </body>
 </html>
