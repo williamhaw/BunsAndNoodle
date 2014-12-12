@@ -107,24 +107,45 @@
                         </c:forEach>         
                     </table>
 
-                    <h1> My Ranked Feedbacks</h1>
+                    <h1> My Usefulness Ratings On Other&#39;s Feedbacks</h1>
                     <sql:query var="ranking" dataSource="jdbc/bns">
-                        SELECT name, title, rating
+                        SELECT title, name, feedback_text, feedback_score, rating
                         FROM rates_feedback
-                        INNER JOIN book
-                        ON book.isbn13 = rates_feedback.ratee_feedback_isbn13
+                        INNER JOIN gives_feedback
+                        ON (ratee, ratee_feedback_isbn13) = (feedback_customer, feedback_isbn13)
                         INNER JOIN customer
-                        ON rates_feedback.ratee = customer.login
-                        WHERE rater = ?<sql:param value="${userid}"/>
+                        ON ratee = customer.login
+                        INNER JOIN book
+                        ON ratee_feedback_isbn13 = book.isbn13
+                        WHERE rater = ? <sql:param value="${userid}"/>
                     </sql:query>
                     <table border='1'>
-                        <th>Other Customer</th>
                         <th>Title</th>
-                        <th>Rating</th>
+                        <th>Other Customer</th>
+                        <th>Other Customer Text</th>
+                        <th>Other Customer Score</th>
+                        <th>My Usefulness Rating</th>
                         <c:forEach var="row" items="${ranking.rowsByIndex}">
                         <tr>
                             <c:forEach var="column" items="${row}">
-                                <td><c:out value="${column}"/></td>
+                                <c:choose>
+                                    <c:when test="${column == row[4]}">
+                                        <c:choose>
+                                            <c:when test="${column == 0}">
+                                                <td>useless</td>
+                                            </c:when>
+                                            <c:when test="${column == 1}">
+                                                <td>useful</td>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <td>very useful</td>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td><c:out value="${column}"/></td>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:forEach>
                         </tr>
                         </c:forEach>         
