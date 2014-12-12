@@ -10,6 +10,20 @@
         <link rel="stylesheet" src="//normalise-css.googlecode.com/svn/trunk/normalize.css">
         <link rel="stylesheet" type="text/css" href="css/main.css">
         <title>Book</title>
+        <script type="text/javascript">
+
+            function toggle2(id, link) {
+                var e = document.getElementById(id);
+                if (e.style.display == '') {
+                    e.style.display = 'none';
+                    link.innerHTML = 'Rate Feedback';
+                } else {
+                    e.style.display = '';
+                    link.innerHTML = 'Rate Feedback!';
+                }
+            }
+
+        </script>
     </head>
     <body>
         <div id="wrapper">
@@ -69,15 +83,19 @@
                 </p>
                 <b>Price: </b> $<c:out value="${row.price}"/>
             </c:forEach><br><br>
-            <h1>Order Book Now!</h1>
-            <form method='post' action='order.jsp'>
-                <label for="numberOfBooks">Number of books to order: </label>
-                <input type = "number" name ="order_number" value="1" min="1" max="${copyNumber}"/>
-                <input type='hidden' name ='copy_number' value='${copyNumber}'/>
-                <input type='hidden' name='isbn13' value='${param.isbn13}'/>
-                <input type='hidden' name='book_name' value='${bookName}' />
-                <input type ='submit' value='Order Book Now!'/>
-            </form>
+            <c:choose>
+                <c:when test='${copyNumber>0}'>
+                    <h1>Order Book Now!</h1>
+                    <form method='post' action='order.jsp'>
+                        <label for="numberOfBooks">Number of books to order: </label>
+                        <input type = "number" name ="order_number" value="1" min="1" max="${copyNumber}"/>
+                        <input type='hidden' name ='copy_number' value='${copyNumber}'/>
+                        <input type='hidden' name='isbn13' value='${param.isbn13}'/>
+                        <input type='hidden' name='book_name' value='${bookName}' />
+                        <input type ='submit' value='Order Book Now!'/>
+                    </form></c:when>
+                <c:otherwise><h1>BOOK OUT OF STOCK!</h1></c:otherwise>
+            </c:choose>
             <br><br>
 
             <sql:query var="feedbacks" dataSource="jdbc/bns">
@@ -123,39 +141,41 @@ Enter text here...</textarea>
                 <p><b>Score:</b> <c:out value="${row.feedback_score}"/></p> 
                 <p><b>Text:</b> <c:out value="${row.feedback_text}"/></p>
                 <p>This feedback has been graded as: <b><c:out value="${row.avgScore}"/></b> from <b><c:out value="${row.ratingCount}"/></b> user(s).</p>
-                <br>
+                <c:set var="feedbackRated" value='false'/>
+                <sql:query var="feedback_scores" dataSource="jdbc/bns">
+                    select rater,rating from rates_feedback where ratee_feedback_isbn13 =  ? <sql:param value="${param.isbn13}"/> and ratee= ?<sql:param value="${row.feedback_customer}"/>;
+                </sql:query>
+                <c:forEach var="ratingsOf" items ='${feedback_scores.rows}'>
+                    <c:if test='${ratingsOf.rater==userid}'>
+                    <c:set var="feedbackRated" value='true'/>
+                    <c:set var="feedbackRating" value='${ratingsOf.rating}'/>
+                    </c:if>
+                </c:forEach>
+                <c:choose>
+                    <c:when test='${feedbackRated}'>
+                        You have rated this feedback as <c:out value='${feedbackRating}'/> points.
+                    </c:when>
+                    <c:otherwise>
+                        <form method='post' action='rates_feedback.jsp'>
+                            <label for='score'>How useful is this review? </label><br>
+                            <input type="number" name='score' value="" min='1' max='10'/>
+                            <input type='submit' value="Submit Review"/>
+                            <input type='hidden' name='isbn13' value='${param.isbn13}'/>
+                            <input type="hidden" name='user' value="<%= session.getAttribute("userid")%>" />
+                            <input type="hidden" name="ratee_login" value="${row.feedback_customer}"/>
+                        </form>
+                    </c:otherwise>
+                </c:choose>
 
-                <div id="content">
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc fermentum.
-                </div>
-                <a href="#" onclick="toggle('content')">Toggle</a>
-                <script type="text/javascript">
-
-                    function toggle(id) {
-                        var e = document.getElementById(id);
-
-                        if (e.style.display == '')
-                            e.style.display = 'none';
-                        else
-                            e.style.display = '';
-                    }
-
-                </script>
 
 
-                <form method='post' action='rates_feedback.jsp'>
-                    <label for='feedback'>Feedback: </label><br>
-                    <textarea rows="4" cols="50" name="feedback">
-        Enter text here...</textarea>
-                    <br>
-                    <label for='score'>Score: </label>
-                    <input type="number" name='score' value="" min='1' max='10'/>
-                    <input type='submit' value="Submit Review"/>
-                    <input type='text' name='isbn13' value='${param.isbn13}'/>
-                    <input type="text" name='user' value="<%= session.getAttribute("userid")%>" />
-                </form>
+
+
+
+
+
             </c:forEach>
-
+                        <br><br>
         </div>
     </body>
 </html>
