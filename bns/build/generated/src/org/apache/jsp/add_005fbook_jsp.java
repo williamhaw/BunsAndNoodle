@@ -1,6 +1,50 @@
-<!-- this is a java snippet )): remember! -->
-<%@ page import ="java.sql.*" %>
-<% 
+package org.apache.jsp;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+import javax.servlet.jsp.*;
+import java.sql.*;
+
+public final class add_005fbook_jsp extends org.apache.jasper.runtime.HttpJspBase
+    implements org.apache.jasper.runtime.JspSourceDependent {
+
+  private static final JspFactory _jspxFactory = JspFactory.getDefaultFactory();
+
+  private static java.util.List<String> _jspx_dependants;
+
+  private org.glassfish.jsp.api.ResourceInjector _jspx_resourceInjector;
+
+  public java.util.List<String> getDependants() {
+    return _jspx_dependants;
+  }
+
+  public void _jspService(HttpServletRequest request, HttpServletResponse response)
+        throws java.io.IOException, ServletException {
+
+    PageContext pageContext = null;
+    HttpSession session = null;
+    ServletContext application = null;
+    ServletConfig config = null;
+    JspWriter out = null;
+    Object page = this;
+    JspWriter _jspx_out = null;
+    PageContext _jspx_page_context = null;
+
+    try {
+      response.setContentType("text/html");
+      pageContext = _jspxFactory.getPageContext(this, request, response,
+      			null, true, 8192, true);
+      _jspx_page_context = pageContext;
+      application = pageContext.getServletContext();
+      config = pageContext.getServletConfig();
+      session = pageContext.getSession();
+      out = pageContext.getOut();
+      _jspx_out = out;
+      _jspx_resourceInjector = (org.glassfish.jsp.api.ResourceInjector) application.getAttribute("com.sun.appserv.jsp.resource.injector");
+
+      out.write("<!-- this is a java snippet )): remember! -->\r\n");
+      out.write("\r\n");
+ 
     String title = request.getParameter("title");
     String book_format = request.getParameter("book_format");
     String pages = request.getParameter("pages");
@@ -13,11 +57,6 @@
     String subject = request.getParameter("subject");
     String copies = request.getParameter("copies");
     String price = request.getParameter("price");
-    
-    //making sure that mysql recognises apostrophies
-    title = title.replace("'", "\\'");
-    authors = authors.replace("'", "\\'");
-    publisher = publisher.replace("'", "\\'");
     
     try {
         if (title.equals("") || 
@@ -53,10 +92,10 @@
             Statement st = con.createStatement();
             int i = st.executeUpdate(
                     "insert into book(title, format, pages, language, authors, publisher, year, isbn13, keywords, subject, copies, price) " +
-                    "values ('" + title + "','" + book_format + "','" + Integer.parseInt(pages) + "','"
+                    "values ('" + title + "','" + book_format + "','" + pages + "','"
                             + language + "','" + authors + "','" + publisher + "','"
                             + year + "','" + isbn13 + "','" + keywords + "','" 
-                            + subject + "','" + Integer.parseInt(copies) + "','" + Float.parseFloat(price) + "')"
+                            + subject + "','" + copies + "','" + price + "')'"
             );
             //registration successful
             if (i > 0) {
@@ -70,4 +109,19 @@
     catch (Exception e) {
         response.sendRedirect("about.jsp?error=" + e.getMessage());
     }
-%>
+
+      out.write("\r\n");
+      out.write("\r\n");
+    } catch (Throwable t) {
+      if (!(t instanceof SkipPageException)){
+        out = _jspx_out;
+        if (out != null && out.getBufferSize() != 0)
+          out.clearBuffer();
+        if (_jspx_page_context != null) _jspx_page_context.handlePageException(t);
+        else throw new ServletException(t);
+      }
+    } finally {
+      _jspxFactory.releasePageContext(_jspx_page_context);
+    }
+  }
+}

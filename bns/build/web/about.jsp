@@ -51,7 +51,7 @@
                         <input type='submit' value="Logout"/>
                     </form>
                     
-                    <h2>Add New Book</h2>
+                    <h1>Add New Book</h1>
                     <form method='post' action='add_book.jsp'>
                         <label for='title'>Title</label>
                         <input type='text' name='title' value='' />
@@ -93,9 +93,21 @@
                         <input type='submit' value='Add New Book!' />
                     </form>
                     
-                    <h2>Store manager information - add/update books and view top m books can go here.</h2>
+                    <br><br>
+                    
+                    <h1>Update Existing Books</h1>
+                    <form method="post" action='update_book.jsp'>
+                        <label for='isbn13'>ISBN13</label>
+                        <input type='text' name="isbn13" values='' />
+                        <br><br>
+                        <label for='number_new_copies'>Number of New Copies</label>
+                        <input type='text' name='number_new_copies' values='' />
+                        <br><br>
+                        <input type='submit' value='Update Book!' />
+                    </form>
+                    
                     <h2>TODO</h2>
-                    <p>update books, view top m books (sort by 3 different ways</p>
+                    <p>view top m books (sort by 3 different ways</p>
                     
                     
                     
