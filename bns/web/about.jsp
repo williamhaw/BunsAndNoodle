@@ -51,8 +51,51 @@
                         <input type='submit' value="Logout"/>
                     </form>
                     
+                    <h2>Add New Book</h2>
+                    <form method='post' action='add_book.jsp'>
+                        <label for='title'>Title</label>
+                        <input type='text' name='title' value='' />
+                        <br><br>
+                        <input type='radio' name='book_format' value='paperback' checked>paperback
+                        <input type='radio' name='book_format' value='hardcover'>hardcover
+                        <br><br>
+                        <label for='pages'>Pages</label>
+                        <input type='text' name='pages' values='' />
+                        <br><br>
+                        <label for='language'>Language</label>
+                        <input type='text' name='language' values='' />
+                        <br><br>
+                        <label for='authors'>Authors</label>
+                        <input type='text' name='authors' values='' />
+                        <br><br>
+                        <label for='publisher'>Publisher</label>
+                        <input type='text' name='publisher' values='' />                        
+                        <br><br>
+                        <!-- test if need stricter forms here -->
+                        <label for='year'>Year</label>
+                        <input type='text' name='year' values='' />                        
+                        <br><br>
+                        <label for='isbn13'>ISBN13</label>
+                        <input type='text' name='isbn13' values='' />                        
+                        <br><br>
+                        <label for='keywords'>Keywords</label>
+                        <input type='text' name='keywords' values='' />                        
+                        <br><br>
+                        <label for='subject'>Subject</label>
+                        <input type='text' name='subject' values='' />                        
+                        <br><br>
+                        <label for='copies'>Copies</label>
+                        <input type='text' name='copies' values='' />                        
+                        <br><br>
+                        <label for='price'>Price</label>
+                        <input type='text' name='price' values='' />                        
+                        <br><br>
+                        <input type='submit' value='Add New Book!' />
+                    </form>
+                    
                     <h2>Store manager information - add/update books and view top m books can go here.</h2>
                     <h2>TODO</h2>
+                    <p>update books, view top m books (sort by 3 different ways</p>
                     
                     
                     
