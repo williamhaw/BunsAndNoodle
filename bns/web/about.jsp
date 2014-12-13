@@ -106,8 +106,170 @@
                         <input type='submit' value='Update Book!' />
                     </form>
                     
+                    <br><br>
+                    <h1>Bookstore Statistics</h1>
+                    <form method='post' action='about.jsp'>
+                        <label for="month">Month</label>
+                        <input type='text' name='month' values='' />
+                        <br><br>
+                        <label for="year">Year</label>
+                        <input type='text' name='year' values='' />
+                        <br><br>
+                        <label for='number_results'>Number of Results to Show</label>
+                        <input type='text' name="number_results" values="" />
+                        <br><br>
+                        <input type='submit' value='Search!' />
+                    </form>
+                    
+                    <br><br>
+                    <!-- title, author, publisher -->
+                    <c:choose>
+                        <c:when test="${param.sort == null}">
+                            <h2>Top Titles Sold</h2>
+                            <sql:query var="pre_top_titles" dataSource="jdbc/bns">
+                                select title, order_copies, order_date, order_isbn13
+                                from orders inner join book on orders.order_isbn13 = book.isbn13
+                                order by order_copies desc
+                            </sql:query>
+                            <table border='1'>
+                                <th>Title</th>
+                                <th>Number of Copies</th>
+                                <th>Date Ordered</th>
+                                <th>ISBN13</th>
+                                <c:forEach var="row" items="${pre_top_titles.rowsByIndex}">
+                                <tr>
+                                    <c:forEach var="column" items="${row}">
+                                        <td><c:out value="${column}"/></td>
+                                    </c:forEach>
+                                </tr>
+                                </c:forEach>
+                            </table>
+                                
+                            <br><br>
+                            <h2>Most Popular Authors</h2>
+                            <sql:query var="pre_top_authors" dataSource="jdbc/bns">
+                                select authors, title, order_copies, order_date, order_isbn13
+                                from orders inner join book on orders.order_isbn13 = book.isbn13
+                                order by order_copies desc
+                            </sql:query>
+                            <table border='1'>
+                                <th>Author</th>
+                                <th>Title</th>
+                                <th>Number of Copies</th>
+                                <th>Date Ordered</th>
+                                <th>ISBN13</th>
+                                <c:forEach var="row" items="${pre_top_authors.rowsByIndex}">
+                                <tr>
+                                    <c:forEach var="column" items="${row}">
+                                        <td><c:out value="${column}"/></td>
+                                    </c:forEach>
+                                </tr>
+                                </c:forEach>
+                            </table>
+                            
+                            <br><br>
+                            <h2>Most Popular Publishers</h2>
+                            <sql:query var="pre_top_publishers" dataSource="jdbc/bns">
+                                select publisher, title, order_copies, order_date, order_isbn13
+                                from orders inner join book on orders.order_isbn13 = book.isbn13
+                                order by order_copies desc
+                            </sql:query>
+                            <table border='1'>
+                                <th>Publisher</th>
+                                <th>Title</th>
+                                <th>Number of Copies</th>
+                                <th>Date Ordered</th>
+                                <th>ISBN13</th>
+                                <c:forEach var="row" items="${pre_top_publishers.rowsByIndex}">
+                                <tr>
+                                    <c:forEach var="column" items="${row}">
+                                        <td><c:out value="${column}"/></td>
+                                    </c:forEach>
+                                </tr>
+                                </c:forEach>
+                            </table> 
+                        </c:when>
+                        
+                        <c:otherwise>
+                            <h2>Top Titles Sold</h2>
+                            <sql:query var="top_titles" dataSource="jdbc/bns">
+                                select title, order_copies, order_date, order_isbn13
+                                from orders inner join book on orders.order_isbn13 = book.isbn13
+                                where month(order_date) rlike ? <sql:param value="${param.month}"/> 
+                                and year(order_date) rlike ? <sql:param value="${param.year}"/>
+                                order by order_copies desc
+                                limit rlike ? <sql:param value="${param.number_results}"/>
+                            </sql:query>
+                            <table border='1'>
+                                <th>Title</th>
+                                <th>Number of Copies</th>
+                                <th>Date Ordered</th>
+                                <th>ISBN13</th>
+                                <c:forEach var="row" items="${top_titles.rowsByIndex}">
+                                <tr>
+                                    <c:forEach var="column" items="${row}">
+                                        <td><c:out value="${column}"/></td>
+                                    </c:forEach>
+                                </tr>
+                                </c:forEach>
+                            </table>   
+                                
+                            <br><br>
+                            <h2>Most Popular Authors</h2>
+                            <sql:query var="top_authors" dataSource="jdbc/bns">
+                                select authors, title, order_copies, order_date, order_isbn13
+                                from orders inner join book on orders.order_isbn13 = book.isbn13
+                                where month(order_date) rlike ? <sql:param value="${param.month}"/> 
+                                and year(order_date) rlike ? <sql:param value="${param.year}"/>
+                                order by order_copies desc
+                                limit rlike ? <sql:param value="${param.number_results}"/>
+                            </sql:query>
+                            <table border='1'>
+                                <th>Author</th>
+                                <th>Title</th>
+                                <th>Number of Copies</th>
+                                <th>Date Ordered</th>
+                                <th>ISBN13</th>
+                                <c:forEach var="row" items="${top_authors.rowsByIndex}">
+                                <tr>
+                                    <c:forEach var="column" items="${row}">
+                                        <td><c:out value="${column}"/></td>
+                                    </c:forEach>
+                                </tr>
+                                </c:forEach>
+                            </table>  
+                                
+                            <br><br>
+                            <h2>Most Popular Publishers</h2>
+                            <sql:query var="top_publishers" dataSource="jdbc/bns">
+                                select publisher, title, order_copies, order_date, order_isbn13
+                                from orders inner join book on orders.order_isbn13 = book.isbn13
+                                where month(order_date) rlike ? <sql:param value="${param.month}"/> 
+                                and year(order_date) rlike ? <sql:param value="${param.year}"/>
+                                order by order_copies desc
+                                limit rlike ? <sql:param value="${param.number_results}"/>
+                            </sql:query>
+                            <table border='1'>
+                                <th>Publisher</th>
+                                <th>Title</th>
+                                <th>Number of Copies</th>
+                                <th>Date Ordered</th>
+                                <th>ISBN13</th>
+                                <c:forEach var="row" items="${top_publishers.rowsByIndex}">
+                                <tr>
+                                    <c:forEach var="column" items="${row}">
+                                        <td><c:out value="${column}"/></td>
+                                    </c:forEach>
+                                </tr>
+                                </c:forEach> 
+                            </table>                                 
+                        </c:otherwise>
+                    </c:choose>
+                    
+                    
+                    <br><br>
                     <h2>TODO</h2>
-                    <p>view top m books (sort by 3 different ways</p>
+                    <p>sort out error of displaying statistics</p>
                     
                     
                     
