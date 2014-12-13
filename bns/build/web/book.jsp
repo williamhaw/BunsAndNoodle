@@ -106,6 +106,7 @@
                 and ratee_feedback_isbn13=feedback_isbn13 group by feedback_text,feedback_score,feedback_customer,name,feedback_date order by avgScore DESC;
             </sql:query> 
             <c:set var="userid" value = '<%= session.getAttribute("userid")%>'/>
+            <%--<c:out value='${userid}'/>--%>
             <c:set var='givenFeedback' value='false'/>
             <c:forEach var="row" items='${feedbacks.rows}'>
                 <c:if test='${row.feedback_customer==userid}'>
@@ -146,19 +147,27 @@ Enter text here...</textarea>
                     select rater,rating from rates_feedback where ratee_feedback_isbn13 =  ? <sql:param value="${param.isbn13}"/> and ratee= ?<sql:param value="${row.feedback_customer}"/>;
                 </sql:query>
                 <c:forEach var="ratingsOf" items ='${feedback_scores.rows}'>
+                    <%--<c:out value='${ratingsOf.rater}'/>--%>
+                    <%--<c:out value='${userid}'/>--%>
                     <c:if test='${ratingsOf.rater==userid}'>
-                    <c:set var="feedbackRated" value='true'/>
-                    <c:set var="feedbackRating" value='${ratingsOf.rating}'/>
+                        <c:set var="feedbackRated" value='true'/>
+                        <c:set var="feedbackRating" value='${ratingsOf.rating}'/>
                     </c:if>
                 </c:forEach>
+                <%--<c:out value='${feedbackRated}'/>--%>
+                <%--<c:out value='${row.feedback_customer}'/>--%>
                 <c:choose>
+
                     <c:when test='${feedbackRated}'>
                         You have rated this feedback as <c:out value='${feedbackRating}'/> points.
                     </c:when>
+                    <c:when test='${userid==row.feedback_customer}'>
+                        You cannot rate your own feedback!
+                    </c:when>
                     <c:otherwise>
-                        <form method='post' action='rates_feedback.jsp'>
+                        <form method='post' action='rate_feedback.jsp'>
                             <label for='score'>How useful is this review? </label><br>
-                            <input type="number" name='score' value="" min='1' max='10'/>
+                            <input type="number" name='score' value="" min='1' max='2'/>
                             <input type='submit' value="Submit Review"/>
                             <input type='hidden' name='isbn13' value='${param.isbn13}'/>
                             <input type="hidden" name='user' value="<%= session.getAttribute("userid")%>" />
@@ -167,7 +176,7 @@ Enter text here...</textarea>
                     </c:otherwise>
                 </c:choose>
 
-
+                <br><br>
 
 
 
@@ -175,7 +184,7 @@ Enter text here...</textarea>
 
 
             </c:forEach>
-                        <br><br>
+            <br><br>
         </div>
     </body>
 </html>
