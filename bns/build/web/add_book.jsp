@@ -14,6 +14,11 @@
     String copies = request.getParameter("copies");
     String price = request.getParameter("price");
     
+    //making sure that mysql recognises apostrophies
+    title = title.replace("'", "\\'");
+    authors = authors.replace("'", "\\'");
+    publisher = publisher.replace("'", "\\'");
+    
     try {
         if (title.equals("") || 
         book_format.equals("") || 
@@ -39,11 +44,31 @@
             response.sendRedirect("about.jsp?error=ISBN13 should be 14 characters long");
         } 
         else {
-            
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/b_and_n_book_store",
+                    "bns",
+                    "password"
+            );
+            Statement st = con.createStatement();
+            int i = st.executeUpdate(
+                    "insert into book(title, format, pages, language, authors, publisher, year, isbn13, keywords, subject, copies, price) " +
+                    "values ('" + title + "','" + book_format + "','" + Integer.parseInt(pages) + "','"
+                            + language + "','" + authors + "','" + publisher + "','"
+                            + year + "','" + isbn13 + "','" + keywords + "','" 
+                            + subject + "','" + Integer.parseInt(copies) + "','" + Float.parseFloat(price) + "')"
+            );
+            //registration successful
+            if (i > 0) {
+                response.sendRedirect("book_search.jsp");
+            }
+            else {
+                response.sendRedirect("about.jsp?error=There was an error with adding of book");
+            }
         }
     }
     catch (Exception e) {
-    
+        response.sendRedirect("about.jsp?error=" + e.getMessage());
     }
 %>
 
