@@ -1,0 +1,161 @@
+/*  
+    brief summary of book search page
+
+    head
+    /head
+
+    body
+        wrapper
+            header
+                logo, company_name
+                nav
+            /header
+
+            search_pane
+                search box title, form, table, button
+            /search_pane
+
+            search_result
+                results of the search in table form
+            /search_result
+        /wrapper
+    /body
+
+*/
+
+/*
+    known issues:
+    child elements fill up the width of their parents by default,
+    unless specified (in actual pixels or percentage)
+    in other words, hardcoding pixels allows children to exceed parents and affect other child elements,
+    sometimes in a highly unexpected manner,
+    e.g. increasing the first padding under "nav ul li a" will force the search_pane downwards;
+    in addition, the header's height must be sufficient
+
+    display does get distorted when website is zoomed out
+    approximately 90% zoom fits the page to the screen
+    
+    notes:
+    allocated 18% width to the search pane, flushed right
+    allocated 81% width to the search results, flushed left  - use percentage rather than hard-coding pixels
+*/
+
+#wrapper {
+    width: 1450px;
+    background-color: #FFF;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header {
+    height: 115px;
+}
+
+#logo {
+    float:left;
+    width: 5%;
+}
+
+#company_name {
+    float:left;
+    text-align: left;
+    height: 26px;
+    line-height: 26px
+}
+
+
+/* search pane */
+#book_info {
+    width: 80%;
+    /*float: left;*/
+}
+
+#book_info table {
+    padding: 10px;
+    border-collapse: collapse;
+    background-color: #A4DCD1;
+    width:80%;
+}
+
+#book_info select {
+    width: 150px;
+}
+
+
+
+/* feedback given */
+#feedback_given {
+    width: 90%;
+}
+
+#feedback_given table {
+    border-collapse: collapse;
+    background-color: #DAF4F0;
+    table-layout: auto; /* use "fixed" if there are rendering problems; seems to be working now*/
+    width: 99%;
+}
+
+
+#feedback_given th, td {
+    text-align: left;
+    border: 1px solid;
+    padding: 10px;
+    /*word-break: break-all; 
+    white-space: nowrap;*/
+}
+
+
+
+h2 {
+    font-size: medium;
+    font-weight: bold;
+}
+
+
+
+/* Navigation bar code from Listamtic
+http://css.maxdesign.com.au/listamatic/horizontal03.htm */
+
+nav ul {
+    padding-left: 0px;
+    margin-left: 0px;
+    background-color: #209a9b;
+    float: right;
+    width: 100%;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    font-size: 1em;
+    padding: 7px 16px; /* increasing the padding can potentially cause search_pane to be shifted down*/
+    background-color: #209a9b;
+    color: #FFF;
+    text-decoration: none;
+    float: right;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+}
+
+nav ul li a:hover {
+    background-color: #999;
+    color: #fff;
+}
+
+.highlight a {
+    background-color: #999;
+}
+
+
+label > input{ /* HIDE RADIO */
+  display:none;
+}
+label > input + img{ /* IMAGE STYLES */
+  cursor:pointer;
+  border:2px solid transparent;
+}
+label > input:checked + img{ /* (CHECKED) IMAGE STYLES */
+  border:2px solid #00f;
+}

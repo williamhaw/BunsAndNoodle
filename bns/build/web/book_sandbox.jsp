@@ -106,9 +106,9 @@
                     </c:forEach>
                 </table>
             </div>
-            <br><br>
+                <br><br>
             <sql:query var="feedbacks" dataSource="jdbc/bns">
-                select feedback_text, feedback_score, feedback_customer,name,feedback_date,avg(IFNULL(rating,0)) as avgScore, count(rating) as ratingCount from(
+                select feedback_text, feedback_score, feedback_customer,name,feedback_date,avg(IFNULL(rating,0)) as avgScore, count(*) as ratingCount from(
                 SELECT feedback_customer, feedback_date,feedback_score,feedback_text, name,feedback_isbn13
                 FROM gives_feedback inner join customer on customer.login=gives_feedback.feedback_customer
                 WHERE feedback_isbn13 =  ? <sql:param value="${param.isbn13}"/>) as K left join rates_feedback on rates_feedback.ratee=feedback_customer
@@ -165,26 +165,18 @@ Enter text here...</textarea>
                         <td><c:out value="${row.feedback_text}"/></td>
                         <td><center>
                             <c:choose>
-                                <c:when test="${row.ratingCount>0}">
-                                    <c:choose>
-                                        <c:when test='${row.avgScore<0.66667}'>
-                                            <img src="img/sad0.png" title='${row.avgScore}' width="30" height="30">
-                                        </c:when>
-                                        <c:when test='${row.avgScore<1.33333}'>
-                                            <img src="img/neutral1.png" title='${row.avgScore}' width="30" height="30">
-                                        </c:when>
-                                        <c:otherwise>
-                                            <img src="img/happy2.png" title='${row.avgScore}' width="30" height="30">
-                                        </c:otherwise>
-                                    </c:choose>
-                                    <br>
-                                    <c:out value="${row.ratingCount}"/> user(s).
+                                <c:when test='${row.avgScore<0.66667}'>
+                                    <img src="img/sad0.png" title='${row.avgScore}' width="30" height="30">
+                                </c:when>
+                                <c:when test='${row.avgScore<1.33333}'>
+                                    <img src="img/neutral1.png" title='${row.avgScore}' width="30" height="30">
                                 </c:when>
                                 <c:otherwise>
-                                    No ratings yet!
+                                    <img src="img/happy2.png" title='${row.avgScore}' width="30" height="30">
                                 </c:otherwise>
                             </c:choose>
-
+                            <br>
+                            <c:out value="${row.ratingCount}"/> user(s).
                         </center>
                         </td>
                         <c:set var="feedbackRated" value='false'/>
