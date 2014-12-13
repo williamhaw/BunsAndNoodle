@@ -71,4 +71,3 @@
         response.sendRedirect("about.jsp?error=" + e.getMessage());
     }
 %>
-
