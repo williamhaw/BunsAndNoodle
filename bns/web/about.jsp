@@ -121,15 +121,19 @@
                         <input type='submit' value='Search!' />
                     </form>
                     
+
+                    
                     <br><br>
                     <!-- title, author, publisher -->
+                    <c:catch var="catchException">
                     <c:choose>
-                        <c:when test="${param.sort == null}">
-                            <h2>Top Titles Sold</h2>
-                            <sql:query var="pre_top_titles" dataSource="jdbc/bns">
-                                select title, order_copies, order_date, order_isbn13
-                                from orders inner join book on orders.order_isbn13 = book.isbn13
-                                order by order_copies desc
+                        <c:when test="${param.month == null}">
+                            <h2>Top 10 Titles Sold</h2>
+                            <sql:query var="pre_top_titles" dataSource="jdbc/bns" maxRows="10">
+                                select title, sum(order_copies) as summed_copies, order_date, order_isbn13
+                                from orders inner join book on order_isbn13 = book.isbn13
+                                group by order_isbn13
+                                order by summed_copies desc
                             </sql:query>
                             <table border='1'>
                                 <th>Title</th>
@@ -146,11 +150,12 @@
                             </table>
                                 
                             <br><br>
-                            <h2>Most Popular Authors</h2>
-                            <sql:query var="pre_top_authors" dataSource="jdbc/bns">
-                                select authors, title, order_copies, order_date, order_isbn13
-                                from orders inner join book on orders.order_isbn13 = book.isbn13
-                                order by order_copies desc
+                            <h2>10 Most Popular Authors</h2>
+                            <sql:query var="pre_top_authors" dataSource="jdbc/bns" maxRows="10">
+                                select authors, title, sum(order_copies) as summed_copies, order_date, order_isbn13
+                                from orders inner join book on order_isbn13 = book.isbn13
+                                group by order_isbn13
+                                order by summed_copies desc
                             </sql:query>
                             <table border='1'>
                                 <th>Author</th>
@@ -168,11 +173,12 @@
                             </table>
                             
                             <br><br>
-                            <h2>Most Popular Publishers</h2>
-                            <sql:query var="pre_top_publishers" dataSource="jdbc/bns">
-                                select publisher, title, order_copies, order_date, order_isbn13
-                                from orders inner join book on orders.order_isbn13 = book.isbn13
-                                order by order_copies desc
+                            <h2>10 Most Popular Publishers</h2>
+                            <sql:query var="pre_top_publishers" dataSource="jdbc/bns" maxRows="10">
+                                select publisher, title, sum(order_copies) as summed_copies, order_date, order_isbn13
+                                from orders inner join book on order_isbn13 = book.isbn13
+                                group by order_isbn13
+                                order by summed_copies desc
                             </sql:query>
                             <table border='1'>
                                 <th>Publisher</th>
@@ -193,12 +199,13 @@
                         <c:otherwise>
                             <h2>Top Titles Sold</h2>
                             <sql:query var="top_titles" dataSource="jdbc/bns">
-                                select title, order_copies, order_date, order_isbn13
-                                from orders inner join book on orders.order_isbn13 = book.isbn13
+                                select title, sum(order_copies) as summed_copies, order_date, order_isbn13
+                                from orders inner join book on order_isbn13 = book.isbn13
                                 where month(order_date) rlike ? <sql:param value="${param.month}"/> 
                                 and year(order_date) rlike ? <sql:param value="${param.year}"/>
-                                order by order_copies desc
-                                limit rlike ? <sql:param value="${param.number_results}"/>
+                                group by order_isbn13
+                                order by summed_copies desc
+                                limit <c:out value="${param.number_results}"/>
                             </sql:query>
                             <table border='1'>
                                 <th>Title</th>
@@ -217,12 +224,13 @@
                             <br><br>
                             <h2>Most Popular Authors</h2>
                             <sql:query var="top_authors" dataSource="jdbc/bns">
-                                select authors, title, order_copies, order_date, order_isbn13
-                                from orders inner join book on orders.order_isbn13 = book.isbn13
+                                select authors, title, sum(order_copies) as summed_copies, order_date, order_isbn13
+                                from orders inner join book on order_isbn13 = book.isbn13
                                 where month(order_date) rlike ? <sql:param value="${param.month}"/> 
                                 and year(order_date) rlike ? <sql:param value="${param.year}"/>
-                                order by order_copies desc
-                                limit rlike ? <sql:param value="${param.number_results}"/>
+                                group by order_isbn13
+                                order by summed_copies desc
+                                limit <c:out value="${param.number_results}"/>
                             </sql:query>
                             <table border='1'>
                                 <th>Author</th>
@@ -242,12 +250,13 @@
                             <br><br>
                             <h2>Most Popular Publishers</h2>
                             <sql:query var="top_publishers" dataSource="jdbc/bns">
-                                select publisher, title, order_copies, order_date, order_isbn13
-                                from orders inner join book on orders.order_isbn13 = book.isbn13
+                                select publisher, title, sum(order_copies) as summed_copies, order_date, order_isbn13
+                                from orders inner join book on order_isbn13 = book.isbn13
                                 where month(order_date) rlike ? <sql:param value="${param.month}"/> 
                                 and year(order_date) rlike ? <sql:param value="${param.year}"/>
-                                order by order_copies desc
-                                limit rlike ? <sql:param value="${param.number_results}"/>
+                                group by order_isbn13
+                                order by summed_copies desc
+                                limit <c:out value="${param.number_results}"/>
                             </sql:query>
                             <table border='1'>
                                 <th>Publisher</th>
@@ -265,12 +274,15 @@
                             </table>                                 
                         </c:otherwise>
                     </c:choose>
+                    </c:catch>
+                    
+                    <c:if test="${catchException != null}">
+                        <p>The exception is : ${catchException}</p>
+                        <br>
+                    </c:if>
                     
                     
                     <br><br>
-                    <h2>TODO</h2>
-                    <p>sort out error of displaying statistics</p>
-                    
                     
                     
                 </c:when>
