@@ -93,7 +93,7 @@
                                 <c:choose>
                                     <c:when test='${row.copies>0}'>
                                         <form method='post' action='order.jsp'>
-                                            <input type = "number" name ="order_number" value="1" min="1" max="${row.copies}" />
+                                            <input type = "number" name ="order_number" value="1" min="1" max="${row.copies}" size="2"/>
                                             <input type='hidden' name ='copy_number' value='${row.copies}'/>
                                             <input type='hidden' name='isbn13' value='${param.isbn13}'/>
                                             <input type='hidden' name='book_name' value='${row.title}' />
@@ -107,13 +107,33 @@
                 </table>
             </div>
             <br><br>
+
+            <sql:query var="feedbackCounting" dataSource="jdbc/bns">
+                select count(*) as counted from gives_feedback where feedback_isbn13=? <sql:param value="${param.isbn13}"/>;
+            </sql:query>
+            <c:forEach var="row" items="${feedbackCounting.rows}">
+                <c:set var="feedbackCount" value="${row.counted}"/>
+            </c:forEach>
+            <c:out value='${param.topN}'/>
+            <c:choose>
+                <c:when test="${param.topN == null}">
+                    <c:set var="toView" value='${feedbackCount}'/>
+                    <!--We've got no topN.-->
+                </c:when>
+                <c:otherwise>
+                    <c:set var="toView" value='${param.topN}'/>
+                    <!--We've got topN.--> 
+                </c:otherwise>
+            </c:choose> 
+            <%--<c:out value="${toView}"/>--%>
             <sql:query var="feedbacks" dataSource="jdbc/bns">
                 select feedback_text, feedback_score, feedback_customer,name,feedback_date,avg(IFNULL(rating,0)) as avgScore, count(rating) as ratingCount from(
                 SELECT feedback_customer, feedback_date,feedback_score,feedback_text, name,feedback_isbn13
                 FROM gives_feedback inner join customer on customer.login=gives_feedback.feedback_customer
                 WHERE feedback_isbn13 =  ? <sql:param value="${param.isbn13}"/>) as K left join rates_feedback on rates_feedback.ratee=feedback_customer
-                and ratee_feedback_isbn13=feedback_isbn13 group by feedback_text,feedback_score,feedback_customer,name,feedback_date order by avgScore DESC;
+                and ratee_feedback_isbn13=feedback_isbn13 group by feedback_text,feedback_score,feedback_customer,name,feedback_date order by avgScore DESC limit <c:out value="${toView}"/>; 
             </sql:query> 
+
             <c:set var="userid" value = '<%= session.getAttribute("userid")%>'/>
             <%--<c:out value='${userid}'/>--%>
             <c:set var='givenFeedback' value='false'/>
@@ -133,15 +153,15 @@
 Enter text here...</textarea>
                         <br>
                         <label for='score'>Score: </label>
-                        <input type="number" name='score' value="" min='1' max='10'/>
+                        <input type="number" name='score' value="" min='1' max='10' size="2"/>
                         <input type='submit' value="Submit Review"/>
-                        <input type='text' name='isbn13' value='${param.isbn13}'/>
-                        <input type="text" name='user' value="<%= session.getAttribute("userid")%>" />
+                        <input type='hidden' name='isbn13' value='${param.isbn13}'/>
+                        <input type="hidden" name='user' value="<%= session.getAttribute("userid")%>" />
                     </form>
                 </c:otherwise>
 
             </c:choose>
-
+                    <%--<c:out value="${toView}"/>--%>
             <br><br>
             <h2>Submitted feedback</h2>
             <div id="feedback_given">
@@ -156,6 +176,16 @@ Enter text here...</textarea>
                         <c:forEach var="columnName" items="${colNames}">
                             <th><c:out value="${columnName}"/></th>
                             </c:forEach>
+                        <th>
+                          
+                    <form method="post" action="">
+                        View Top 
+                                <input type="number" name="topN" value="${toView}" min="1" max="${feedbackCount}" size="2"/>
+                                <input type="hidden" name="isbn13" value="${param.isbn13}"/>
+                                <input type='submit' value="Refresh"/>
+                    </form>
+                    </th>
+                    </form>
                     </tr>
                     <c:forEach var="row" items="${feedbacks.rows}">
                         <tr>
